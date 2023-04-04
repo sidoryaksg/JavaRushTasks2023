@@ -73,29 +73,53 @@ public class MinesweeperGame extends Game {
     }
 
     private void openTile(int x, int y) {
-        GameObject gameObject = gameField[y][x];
-        gameObject.isOpen = true;
+
         setCellColor(x, y, Color.GREEN);
-        if (gameObject.isMine) {
-            setCellValue(gameObject.x, gameObject.y, MINE);
+        if (gameField[y][x].isOpen) {
 
+        } else if (gameField[y][x].isMine) {
+            setCellValue(x, y, MINE);
+            gameField[y][x].isOpen = true;
 
-        } else if (gameObject.countMineNeighbors == 0) {
-            setCellValue(gameObject.x, gameObject.y, "");
-            for (GameObject neighbor : getNeighbors(gameObject)
+        } else if (gameField[y][x].countMineNeighbors == 0) {
+            setCellValue(x, y, "");
+            gameField[y][x].isOpen = true;
+            for (GameObject neighbor : getNeighbors(gameField[y][x])
             ) {
-                if (!neighbor.isOpen)
-                    openTile(neighbor.x, neighbor.y);
+                openTile(neighbor.x, neighbor.y);
             }
 
         } else {
-            setCellNumber(gameObject.x, gameObject.y, gameObject.countMineNeighbors);
-
+            setCellNumber(x, y, gameField[y][x].countMineNeighbors);
+            gameField[y][x].isOpen = true;
         }
+    }
+    private void markTile (int x, int y){
+        GameObject gameObject = gameField[y][x];
+        if (!gameObject.isOpen){
+            if (gameObject.isFlag){
+                gameObject.isFlag = false;
+                countFlags++;
+                setCellValue(gameObject.x, gameObject.y, "");
+                setCellColor(gameObject.x, gameObject.y, Color.ORANGE);
+            } else if(countFlags > 0){
+                gameObject.isFlag = true;
+                countFlags--;
+                setCellValue(gameObject.x, gameObject.y, FLAG);
+                setCellColor(gameObject.x, gameObject.y, Color.YELLOW);
+            }
+        }
+
+
     }
 
     @Override
     public void onMouseLeftClick(int x, int y) {
         openTile(x, y);
+    }
+
+    @Override
+    public void onMouseRightClick(int x, int y) {
+        markTile(x, y);
     }
 }
