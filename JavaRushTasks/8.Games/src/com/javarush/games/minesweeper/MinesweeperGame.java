@@ -76,27 +76,28 @@ public class MinesweeperGame extends Game {
 
     private void openTile(int x, int y) {
 
-        setCellColor(x, y, Color.GREEN);
-        if (gameField[y][x].isOpen) {
 
-        } else if (gameField[y][x].isMine) {
-            gameOver();
-            setCellValueEx(x, y, Color.RED, MINE);
-        } else if (gameField[y][x].isMine) {
-            setCellValue(x, y, MINE);
-            gameField[y][x].isOpen = true;
+        if (!gameField[y][x].isOpen && !gameField[y][x].isFlag && !isGameStopped) {
 
-        } else if (gameField[y][x].countMineNeighbors == 0) {
-            setCellValue(x, y, "");
-            gameField[y][x].isOpen = true;
-            for (GameObject neighbor : getNeighbors(gameField[y][x])
-            ) {
-                openTile(neighbor.x, neighbor.y);
+            if (gameField[y][x].isMine) {
+                gameOver();
+                gameField[y][x].isOpen = true;
+                setCellValueEx(x, y, Color.RED, MINE);
+            } else if (gameField[y][x].countMineNeighbors == 0) {
+                setCellValue(x, y, "");
+                gameField[y][x].isOpen = true;
+                setCellColor(x, y, Color.GREEN);
+                for (GameObject neighbor : getNeighbors(gameField[y][x])
+                ) {
+                    if (!neighbor.isOpen)
+                    openTile(neighbor.x, neighbor.y);
+                }
+
+            } else {
+                setCellNumber(x, y, gameField[y][x].countMineNeighbors);
+                gameField[y][x].isOpen = true;
+                setCellColor(x, y, Color.GREEN);
             }
-
-        } else {
-            setCellNumber(x, y, gameField[y][x].countMineNeighbors);
-            gameField[y][x].isOpen = true;
         }
     }
 
