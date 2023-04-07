@@ -15,6 +15,7 @@ public class MinesweeperGame extends Game {
     private static final String FLAG = "\uD83D\uDEA9";
     private boolean isGameStopped;
     private int countClosedTiles = SIDE * SIDE;
+    private int score = 0;
 
     @Override
     public void initialize() {
@@ -90,6 +91,9 @@ public class MinesweeperGame extends Game {
             } else if (gameField[y][x].countMineNeighbors == 0) {
                 setCellValue(x, y, "");
                 setCellColor(x, y, Color.GREEN);
+                score = score + 5;
+                setScore(score);
+
                 if (countClosedTiles==countMinesOnField)
                     win();
                 for (GameObject neighbor : getNeighbors(gameField[y][x])
@@ -101,6 +105,9 @@ public class MinesweeperGame extends Game {
             } else {
                 setCellNumber(x, y, gameField[y][x].countMineNeighbors);
                 setCellColor(x, y, Color.GREEN);
+                score = score + 5;
+                setScore(score);
+
                 if (countClosedTiles==countMinesOnField)
                     win();
             }
